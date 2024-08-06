@@ -20,5 +20,3 @@ df = pd.DataFrame(initial_data)
 
 # Step 2: Save the DataFrame to a CSV file
 df.to_csv('history.csv', index=False)
-
-print('hi')
