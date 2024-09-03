@@ -4,7 +4,7 @@ from botorch.models import SingleTaskGP
 from botorch.models.transforms import Normalize, Standardize
 from botorch.fit import fit_gpytorch_mll
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from botorch.acquisition import LogExpectedImprovement
+from botorch.acquisition import UpperConfidenceBound
 from botorch.optim import optimize_acqf
 
 # Define the parameter names
@@ -47,8 +47,8 @@ gp = SingleTaskGP(
 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
 fit_gpytorch_mll(mll)
 
-# Set best_f to the maximum of the negated loss values
-logNEI = LogExpectedImprovement(model=gp, best_f=negated_loss_Y.max())
+# beta value determines exploration-exploitation trade-off. Higher beta values lead to more exploration.
+ucb = UpperConfidenceBound(model=gp, beta=0.25)
 
 # Define the bounds for optimization using the parameter bounds
 bounds = torch.tensor(
@@ -59,7 +59,7 @@ bounds = torch.tensor(
 
 # Optimize the acquisition function to find the next candidate point
 candidate, acq_value = optimize_acqf(
-    logNEI, bounds=bounds, q=1, num_restarts=5, raw_samples=20,
+    ucb, bounds=bounds, q=1, num_restarts=5, raw_samples=20,
 )
 
 # Save the candidate point to a new CSV file
