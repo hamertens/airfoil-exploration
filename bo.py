@@ -48,7 +48,7 @@ mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
 fit_gpytorch_mll(mll)
 
 # beta value determines exploration-exploitation trade-off. Higher beta values lead to more exploration.
-ucb = UpperConfidenceBound(model=gp, beta=0.25)
+ucb = UpperConfidenceBound(model=gp, beta=4.0)
 
 # Define the bounds for optimization using the parameter bounds
 bounds = torch.tensor(
